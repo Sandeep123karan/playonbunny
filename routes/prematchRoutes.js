@@ -1,0 +1,41 @@
+const express = require("express");
+const router = express.Router();
+const upload = require("../middleware/upload");
+
+const {
+  createPrematch,
+  getAllPrematch,
+  getSinglePrematch,
+  updatePrematch,
+  deletePrematch,
+  toggleLive
+} = require("../controllers/prematchController");
+
+const { protectAdmin, adminOnly } = require("../middleware/authMiddleware");
+
+/* upload fields */
+const cpUpload = upload.fields([
+  { name: "image", maxCount: 1 },
+  { name: "team1Logo", maxCount: 1 },
+  { name: "team2Logo", maxCount: 1 }
+]);
+
+// admin create
+router.post("/create", protectAdmin, adminOnly, cpUpload, createPrematch);
+
+// get all
+router.get("/all", getAllPrematch);
+
+// single
+router.get("/:id", getSinglePrematch);
+
+// update
+router.put("/update/:id", protectAdmin, adminOnly, cpUpload, updatePrematch);
+
+// delete
+router.delete("/delete/:id", protectAdmin, adminOnly, deletePrematch);
+
+// live toggle
+router.put("/live/:id", protectAdmin, adminOnly, toggleLive);
+
+module.exports = router;
